@@ -6,14 +6,16 @@ import json
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/execute', methods=['GET'])
+@app.route('/execute', methods=['POST'])
 def execute_code():
     try:
         result = subprocess.run(["python", "scrapper_database/spiders/spider.py"], capture_output=True, text=True)
 
+        output = result.stderr
+
         return jsonify({
-            'result': result.stderr,
-            'error': result.stdout
+            'result': output,  
+            'additional_info': result.stdout  
         })
     
     except Exception as e:
