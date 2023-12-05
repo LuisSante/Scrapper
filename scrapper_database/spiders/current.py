@@ -1,16 +1,13 @@
 import scrapy
-from scrapy_user_agents.middlewares import RandomUserAgentMiddleware
-from scrapy.spidermiddlewares.httperror import HttpError
-from twisted.internet.error import DNSLookupError
-from twisted.internet.error import TimeoutError
-from scrapy.spidermiddlewares.offsite import OffsiteMiddleware
+from scrapy.crawler import CrawlerProcess
+from scrapy.utils.project import get_project_settings
 import os
 
 class VerifyLinksSpider(scrapy.Spider):
     name = 'verify_links'
 
     custom_settings = {
-        'USER_AGENT': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36',
+        'USER_AGENT': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.45 Safari/537.36',
         'RETRY_TIMES': 5,   # Número máximo de reintentos permitidos
         'RETRY_DELAY': 10,  # Tiempo de espera (en segundos) entre reintentos
         'DOWNLOADER_MIDDLEWARES': {
@@ -65,3 +62,11 @@ class VerifyLinksSpider(scrapy.Spider):
         else:
             self.logger.warning(f"Giving up retrying {request.url} (failed {retries} times)")
             return None
+
+def run_spider():
+    process = CrawlerProcess(get_project_settings())
+    process.crawl(VerifyLinksSpider)
+    process.start()
+
+if __name__ == "__main__":
+    run_spider()
