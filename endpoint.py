@@ -14,15 +14,16 @@ CORS(app)
 def run_spider():
 
     current_dir = os.path.dirname(os.path.abspath(__file__))
-    jsonl_file_path = os.path.join(current_dir, 'spider.jsonl')
+    jsonl_file_path = os.path.join(current_dir, 'current.jsonl')
 
     with open(jsonl_file_path, 'w') as file:
         file.write('')
 
-    # result = subprocess.run(["python", "scrapper_database/spiders/current.py"], capture_output=True, text=True)
     # result = subprocess.run(["scrapy", "runspider" , "scrapper_database/spiders/spider.py"], capture_output=True, text=True)
-    subprocess.run(["scrapy", "runspider" , "scrapper_database/spiders/spider.py", "-o" , "spider.jsonl"], capture_output=True, text=True)
-    # output = result.stderr
+    result = subprocess.run(["scrapy", "runspider" , "scrapper_database/spiders/current.py", "-o" , "current.jsonl"], capture_output=True, text=True)
+    output = result.stderr
+
+    print(output)
 
     json_data = []
     with open(jsonl_file_path, 'r' , encoding='utf-8') as jsonl_file:
