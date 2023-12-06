@@ -6,7 +6,8 @@ function App() {
 
   useEffect(() => {
     const enviarSolicitud = async () => {
-      const url = "http://127.0.0.1:8080/execute";
+      // const url = "http://127.0.0.1:8080/execute";
+      const url = "https://imagespider-2fk5vwiqyq-tl.a.run.app/execute";
 
       try {
         const response = await fetch(url, {

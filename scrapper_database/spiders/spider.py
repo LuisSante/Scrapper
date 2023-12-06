@@ -19,10 +19,10 @@ class QuotesSpider(scrapy.Spider):
         if next_page is not None:
             yield response.follow(next_page, self.parse)
 
-def run_spider():
-    process = CrawlerProcess(get_project_settings())
-    process.crawl(QuotesSpider)
-    process.start()
+# def run_spider():
+#     process = CrawlerProcess(get_project_settings())
+#     process.crawl(QuotesSpider)
+#     process.start()
 
-if __name__ == "__main__":
-    run_spider()
+# if __name__ == "__main__":
+#     run_spider()

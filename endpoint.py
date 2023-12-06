@@ -4,47 +4,40 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime, timedelta
 
 import subprocess
-import ast
-import re
+import os
+import json
 import pandas as pd
 
 app = Flask(__name__)
 CORS(app)
 
-def convert_json(output):
-    pattern = re.compile(r'{[^}]*}')
-    matches = pattern.findall(output)
-    matches = [match.replace("“", "") for match in matches]
-    matches = [match.replace("”", "") for match in matches]
-    matches = [match.replace("\"", "\'") for match in matches]
-    matches = [match.replace("’", "'") for match in matches]
-    matches = [match.replace("'m", " am") for match in matches]
-    matches = [match.replace("'re", " are") for match in matches]
-    matches = [match.replace("'s", " is") for match in matches]
-    matches = [match.replace("'ve", " have") for match in matches]
-    matches = [match.replace("n't", "nt") for match in matches]
-    matches = [match.replace("'d", " did") for match in matches]
-    matches = [match.replace("'ll", " will") for match in matches]
-    
-    matches = matches[1:-1]
-
-    return matches
-
 def run_spider():
-    result = subprocess.run(["python", "scrapper_database/spiders/current.py"], capture_output=True, text=True)
-    output = result.stderr
-    matches = convert_json(output)
 
-    json_objects = [ast.literal_eval(match) for match in matches]
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    jsonl_file_path = os.path.join(current_dir, 'spider.jsonl')
+
+    with open(jsonl_file_path, 'w') as file:
+        file.write('')
+
+    # result = subprocess.run(["python", "scrapper_database/spiders/current.py"], capture_output=True, text=True)
+    # result = subprocess.run(["scrapy", "runspider" , "scrapper_database/spiders/spider.py"], capture_output=True, text=True)
+    subprocess.run(["scrapy", "runspider" , "scrapper_database/spiders/spider.py", "-o" , "spider.jsonl"], capture_output=True, text=True)
+    # output = result.stderr
+
+    json_data = []
+    with open(jsonl_file_path, 'r' , encoding='utf-8') as jsonl_file:
+        for line in jsonl_file:
+            json_object = json.loads(line)
+            json_data.append(json_object)
 
     print(f"Spider executed at {datetime.now()}")
 
-    return json_objects
+    return json_data
 
 # end_date = datetime.now() + timedelta(days=2) # Descomentar para la prueba de 2 dias
 
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(run_spider, 'interval', minutes=10)
+scheduler.add_job(run_spider, 'interval', minutes=1)
 # scheduler.add_job(run_spider, 'interval', end_date=end_date) # Complemento de linea 40
 
 scheduler.start()
