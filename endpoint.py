@@ -38,7 +38,7 @@ def run_spider():
 # end_date = datetime.now() + timedelta(days=2) # Descomentar para la prueba de 2 dias
 
 scheduler = BackgroundScheduler(daemon=True)
-scheduler.add_job(run_spider, 'interval', minutes=1)
+scheduler.add_job(run_spider, 'interval', minutes=20)
 # scheduler.add_job(run_spider, 'interval', end_date=end_date) # Complemento de linea 40
 
 scheduler.start()
